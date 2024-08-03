@@ -1,4 +1,5 @@
 // IMPORTS
+use regex::Regex;
 use serde::Deserialize;
 use serde_json::Result;
 use std::env;
@@ -32,19 +33,18 @@ fn main() -> Result<()> {
 
     // open apps that are not running
     for app in apps {
-        let app_path = APP_DIR.to_string() + &app + ".app";
         // get is_running status as 'true' or 'false'
         let is_running = sys.processes_by_name(app.as_ref()).next().is_some(); // next() => returns next item from iterator or None // is_some() => returns true for an entry and false for None
 
         // if app is not running, execute open command
         if !is_running {
-            println!("opening: {} => {}", app, app_path);
+            println!("opening => {}", app);
             Command::new("open")
-                .arg(app_path)
+                .arg(format!("/Applications/{}.app", app))
                 .spawn()
-                .expect("failed to open: {} => {}");
+                .expect("failed to open => {}");
         } else {
-            println!("already running: {} => {}", app, app_path);
+            println!("already running => {}", app);
         }
     }
 
